@@ -1,0 +1,26 @@
+services:
+  # 1. ML Engine (Python/FastAPI)
+  - type: web
+    name: finalogica-ml-engine
+    runtime: python
+    rootDir: ml
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+  # 2. Backend API (Node.js/Express)
+  - type: web
+    name: finalogica-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromValue: postgresql://neondb_owner:npg_pKi65tdHZRCT@ep-damp-thunder-a1oqe6z4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - key: ML_URL
+        value: https://finalogica-main.onrender.com/api # Replace with your actual live ML URL
+      - key: OPEN_METEO
+        value: 1
