@@ -1,11 +1,15 @@
 
 
+import os
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 import uvicorn
 from PIL import Image
 import io, json, torch, torchvision.transforms as T
 from torchvision.models import mobilenet_v3_small, MobileNet_V3_Small_Weights
+
+# Optimize for low-memory environments (Render Free Tier)
+torch.set_num_threads(1)
 
 app = FastAPI(title="FinAlogica ML Engine", version="1.0.0")
 
@@ -50,4 +54,5 @@ async def predict(file: UploadFile = File(...)):
     return JSONResponse({"predictions": top})
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    port = int(os.environ.get("PORT", 8001))
+    uvicorn.run(app, host="0.0.0.0", port=port)
