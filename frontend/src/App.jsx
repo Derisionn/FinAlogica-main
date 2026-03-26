@@ -104,12 +104,30 @@ export default function App() {
 
             {pred && (
               <div style={{ marginTop: 32 }}>
-                <h4 style={{ marginBottom: 12 }}>Detection Results</h4>
-                <div className="result-box">
-                  <pre style={{ margin: 0 }}>{JSON.stringify(pred, null, 2)}</pre>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 }}>
+                  <h4 style={{ margin: 0 }}>Detection Analysis</h4>
+                  <div className="status-badge" style={{ background: 'var(--success)', color: 'white' }}>High Accuracy</div>
                 </div>
-                <div style={{ marginTop: 16, fontSize: '1.1rem' }}>
-                  Identified as: <strong style={{ color: 'var(--primary)', borderBottom: '2px solid var(--primary-glass)' }}>{top}</strong>
+
+                <div className="card" style={{ background: 'var(--bg)', boxShadow: 'none', borderStyle: 'dashed' }}>
+                  {pred.predictions?.slice(0, 3).map((p, i) => (
+                    <div key={i} className="confidence-container">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 600 }}>
+                        <span>{p.label}</span>
+                        <span>{Math.round(p.confidence * 100)}%</span>
+                      </div>
+                      <div className="confidence-bar-bg">
+                        <div 
+                          className="confidence-bar-fill" 
+                          style={{ width: `${p.confidence * 100}%`, opacity: 1 - (i * 0.2) }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ marginTop: 16, fontSize: '1.25rem', fontWeight: 700, textAlign: 'center' }}>
+                  Target Confirmed: <span style={{ color: 'var(--primary)' }}>{top}</span>
                 </div>
               </div>
             )}
@@ -170,10 +188,38 @@ export default function App() {
             )}
 
             {rec && (
-              <div style={{ marginTop: 32 }}>
-                <h4 style={{ marginBottom: 12 }}>Recommended Strategy</h4>
-                <div className="result-box" style={{ background: 'linear-gradient(to bottom right, #1e293b, #0f172a)' }}>
-                  <pre style={{ margin: 0 }}>{JSON.stringify(rec, null, 2)}</pre>
+              <div className="result-grid">
+                <div className="recommendation-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <h4>Local Weather</h4>
+                    <div className="stat-icon">🌡️</div>
+                  </div>
+                  <div className="recommendation-value">{rec.weather?.temp_c}°C</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Wind: {rec.weather?.wind_kph} km/h
+                  </div>
+                </div>
+
+                <div className="recommendation-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <h4>Bait Suggestion</h4>
+                    <div className="stat-icon">🪱</div>
+                  </div>
+                  <div className="recommendation-value" style={{ fontSize: '1.1rem' }}>{rec.bait_suggestion}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Optimal for {top}
+                  </div>
+                </div>
+
+                <div className="recommendation-card" style={{ gridColumn: 'span 1' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <h4>Relevance Score</h4>
+                    <div className="stat-icon">🎯</div>
+                  </div>
+                  <div className="recommendation-value">{Math.round(rec.relevance_score * 100)}%</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    {rec.notes}
+                  </div>
                 </div>
               </div>
             )}
