@@ -240,9 +240,9 @@ export default function App() {
                     <h4>Local Weather</h4>
                     <div className="stat-icon">🌡️</div>
                   </div>
-                  <div className="recommendation-value">{rec.weather?.temp_c}°C</div>
+                  <div className="recommendation-value">{rec.weather?.tempC}°C</div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Wind: {rec.weather?.wind_kph} km/h
+                    Wind: {rec.weather?.windKph?.toFixed(1)} km/h
                   </div>
                 </div>
 

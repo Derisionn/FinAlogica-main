@@ -227,8 +227,12 @@ input:focus {
 
 .search-wrapper {
   display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 8px;
+  margin-bottom: 32px;
+  background: #f1f5f9;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
 }
 
 .search-input {
@@ -238,6 +242,13 @@ input:focus {
 
 .search-input input {
   padding-left: 44px;
+  border: none;
+  background: transparent;
+}
+
+.search-input input:focus {
+  box-shadow: none;
+  background: #fff;
 }
 
 .search-icon {
