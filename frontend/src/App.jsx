@@ -8,12 +8,34 @@ export default function App() {
   const [file, setFile] = useState(null)
   const [lat, setLat] = useState(23.25)
   const [lon, setLon] = useState(77.41)
+  const [query, setQuery] = useState('')
+  const [searching, setSearching] = useState(false)
 
   const top = pred?.predictions?.[0]?.label || null
   const { data: rec, isFetching: loadingRec, error: recErr, refetch } =
     useRecommendQuery({ lat, lon, species: top ?? 'tench' }, { skip: !top })
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file])
+
+  const handleSearch = async (e) => {
+    if (e) e.preventDefault()
+    if (!query) return
+    setSearching(true)
+    try {
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`)
+      const data = await res.json()
+      if (data.results?.[0]) {
+        setLat(data.results[0].latitude)
+        setLon(data.results[0].longitude)
+      } else {
+        alert("Location not found. Please try a different name.")
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSearching(false)
+    }
+  }
 
   const handlePredict = async () => {
     if (!file) return
@@ -145,6 +167,30 @@ export default function App() {
                 💡 Complete Step 1 to unlock location-aware fishing advice.
               </p>
             )}
+
+            <form className="search-wrapper" onSubmit={handleSearch}>
+              <div className="search-input">
+                <div className="search-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter location (e.g. London, Mumbai, etc.)"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  disabled={!top || searching}
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                disabled={!top || searching || !query}
+              >
+                {searching ? '...' : 'Search'}
+              </button>
+            </form>
 
             <div className="grid-2" style={{ marginBottom: 24 }}>
               <div className="input-container">
