@@ -32,7 +32,7 @@ r.post("/", upload.single("image"), async (req, res) => {
     res.json(resp.data);
   } catch (e) {
     console.error(e.message);
-    res.status(500).json({ error: "ML service error" });
+    res.status(500).json({ error: "ML service error", details: e.message });
   }
 });
 
