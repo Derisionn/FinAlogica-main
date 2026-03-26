@@ -114,12 +114,12 @@ export default function App() {
                     <div key={i} className="confidence-container">
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 600 }}>
                         <span>{p.label}</span>
-                        <span>{Math.round(p.confidence * 100)}%</span>
+                        <span>{Math.round(p.score * 100)}%</span>
                       </div>
                       <div className="confidence-bar-bg">
                         <div 
                           className="confidence-bar-fill" 
-                          style={{ width: `${p.confidence * 100}%`, opacity: 1 - (i * 0.2) }}
+                          style={{ width: `${p.score * 100}%`, opacity: 1 - (i * 0.2) }}
                         ></div>
                       </div>
                     </div>
