@@ -1,23 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useListSpeciesQuery, usePredictMutation, useRecommendQuery } from './app/services.js'
 
-const card = {
-  background: '#fff',
-  border: '1px solid #eaeaea',
-  borderRadius: '14px',
-  padding: '18px',
-  boxShadow: '0 4px 18px rgba(0,0,0,0.06)'
-}
-const btn = {
-  padding: '10px 16px',
-  borderRadius: '10px',
-  border: '1px solid #ddd',
-  cursor: 'pointer',
-  fontWeight: 600
-}
-const btnPrimary = { ...btn, background: '#2563eb', color: '#fff', border: '1px solid #1d4ed8' }
-const inputBox = { padding: '10px 12px', borderRadius: '10px', border: '1px solid #ddd', width: '100%' }
-
 export default function App() {
   const { data: species = [], isLoading: loadingSpecies } = useListSpeciesQuery()
   const [predict, { data: pred, isLoading: loadingPredict, error: predErr }] = usePredictMutation()
@@ -36,149 +19,189 @@ export default function App() {
     if (!file) return
     try {
       await predict(file).unwrap()
-    } catch (e) {
-     
-    }
+    } catch (e) {}
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f6f7fb', padding: '24px' }}>
-      <div style={{ maxWidth: 980, margin: '0 auto', fontFamily: 'Inter, system-ui, Arial' }}>
-        <header style={{ margin: '10px 0 24px' }}>
-          <h1 style={{ margin: 0, fontSize: 30 }}>🐟 FinAlogica</h1>
-          <div style={{ color: '#6b7280' }}>AI fish ID + weather-aware recommendations</div>
+    <div className="app-container">
+      <div className="content-wrapper">
+        <header>
+          <h1>🐟 FinAlogica</h1>
+          <p>Next-gen AI fish identification & local weather insights</p>
         </header>
 
-        {/* Upload & Predict */}
-        <section style={{ ...card, marginBottom: 16 }}>
-          <h3 style={{ marginTop: 0 }}>1) Upload image & Predict</h3>
+        <main>
+          {/* Section 1: Upload & Predict */}
+          <section className="card">
+            <h3>
+              <span className="status-badge">Step 1</span>
+              Identification Engine
+            </h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div>
-              <div style={{ marginBottom: 10 }}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  style={{ ...inputBox, padding: 8 }}
-                />
-              </div>
-              <button
-                style={file ? btnPrimary : { ...btnPrimary, opacity: 0.5, cursor: 'not-allowed' }}
-                disabled={!file || loadingPredict}
-                onClick={handlePredict}
-              >
-                {loadingPredict ? 'Predicting…' : 'Predict'}
-              </button>
+            <div className="grid-2">
+              <div className="upload-controls">
+                <div className="input-container">
+                  <label className="input-label">Select Catch Photo</label>
+                  
+                  <div className="file-input-wrapper">
+                    <input
+                      type="file"
+                      id="fish-upload"
+                      className="file-input-native"
+                      accept="image/*"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    />
+                    <div className="file-input-custom">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                      {file ? 'Change Photo' : 'Click or Drag to Upload'}
+                    </div>
+                  </div>
 
-              {predErr && (
-                <div style={{ marginTop: 10, color: '#b91c1c' }}>
-                  Prediction failed. Open DevTools → Console/Network for details.
+                  {file && (
+                    <div className="file-name-overlay">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      {file.name}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+                
+                <button
+                  className="btn btn-primary"
+                  disabled={!file || loadingPredict}
+                  onClick={handlePredict}
+                >
+                  {loadingPredict ? (
+                    <span className="animate-pulse">Analyzing catch...</span>
+                  ) : (
+                    <>🔍 Identify Fish</>
+                  )}
+                </button>
 
-            <div>
-              <div style={{ ...card, padding: 12, background: '#fafafa' }}>
-                <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Preview</div>
-                {previewUrl ? (
-                  <img src={previewUrl} alt="preview" style={{ maxWidth: '100%', borderRadius: 8 }} />
-                ) : (
-                  <div style={{ color: '#6b7280' }}>No image selected.</div>
+                {predErr && (
+                  <div className="error-msg">
+                    <strong>Connection Error:</strong> {predErr.data?.details || "The ML service is currently waking up. Please try again in 5-10 seconds."}
+                  </div>
                 )}
               </div>
+
+              <div className="preview-container">
+                <div className="preview-box">
+                  {previewUrl ? (
+                    <img src={previewUrl} alt="preview" />
+                  ) : (
+                    <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                      <p style={{ fontSize: '2rem', margin: 0 }}>📸</p>
+                      <p>Image preview will appear here</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+
+            {pred && (
+              <div style={{ marginTop: 32 }}>
+                <h4 style={{ marginBottom: 12 }}>Detection Results</h4>
+                <div className="result-box">
+                  <pre style={{ margin: 0 }}>{JSON.stringify(pred, null, 2)}</pre>
+                </div>
+                <div style={{ marginTop: 16, fontSize: '1.1rem' }}>
+                  Identified as: <strong style={{ color: 'var(--primary)', borderBottom: '2px solid var(--primary-glass)' }}>{top}</strong>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* Section 2: Recommendations */}
+          <section className="card" style={{ opacity: !top ? 0.7 : 1 }}>
+            <h3>
+              <span className="status-badge">Step 2</span>
+              Angler Insights
+            </h3>
+            
+            {!top && (
+              <p style={{ color: 'var(--text-muted)', marginBottom: 24 }}>
+                💡 Complete Step 1 to unlock location-aware fishing advice.
+              </p>
+            )}
+
+            <div className="grid-2" style={{ marginBottom: 24 }}>
+              <div className="input-container">
+                <label className="input-label">Latitude</label>
+                <input
+                  type="number"
+                  step="0.0001"
+                  value={lat}
+                  onChange={(e) => setLat(parseFloat(e.target.value || '0'))}
+                  disabled={!top}
+                />
+              </div>
+              <div className="input-container">
+                <label className="input-label">Longitude</label>
+                <input
+                  type="number"
+                  step="0.0001"
+                  value={lon}
+                  onChange={(e) => setLon(parseFloat(e.target.value || '0'))}
+                  disabled={!top}
+                />
+              </div>
+            </div>
+
+            <button
+              className="btn btn-primary"
+              disabled={!top || loadingRec}
+              onClick={() => refetch()}
+            >
+              {loadingRec ? (
+                <span className="animate-pulse">Fetching weather data...</span>
+              ) : (
+                <>🎣 Get Fishing Advice</>
+              )}
+            </button>
+
+            {recErr && (
+              <div className="error-msg">
+                Failed to fetch weather insights. Please verify your connection.
+              </div>
+            )}
+
+            {rec && (
+              <div style={{ marginTop: 32 }}>
+                <h4 style={{ marginBottom: 12 }}>Recommended Strategy</h4>
+                <div className="result-box" style={{ background: 'linear-gradient(to bottom right, #1e293b, #0f172a)' }}>
+                  <pre style={{ margin: 0 }}>{JSON.stringify(rec, null, 2)}</pre>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* Section 3: Catalog */}
+          <section className="card">
+            <h3>📖 Species Library</h3>
+            {loadingSpecies ? (
+              <div className="animate-pulse">Fetching catalog...</div>
+            ) : (
+              <div className="species-list">
+                {species.map(s => (
+                  <div key={s.id} className="species-item">
+                    <strong>{s.common_name}</strong>
+                    <span>{s.scientific_name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </main>
+
+        <footer>
+          <div>FinAlogica Cloud Platform &copy; 2026</div>
+          <div style={{ marginTop: 8, fontSize: '0.75rem', opacity: 0.7 }}>
+            API: {import.meta.env.VITE_API_URL || 'Local Environment'} &nbsp;|&nbsp; Engine: Render Cloud Compute
           </div>
-
-          {pred && (
-            <div style={{ marginTop: 14 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>Prediction</div>
-              <div style={{ ...card, background: '#0b1324', color: '#e2e8f0', overflowX: 'auto' }}>
-                <pre style={{ margin: 0 }}>{JSON.stringify(pred, null, 2)}</pre>
-              </div>
-              <div style={{ marginTop: 8 }}>
-                Top species: <strong>{top}</strong>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Recommendations */}
-        <section style={{ ...card, marginBottom: 16 }}>
-          <h3 style={{ marginTop: 0 }}>2) Location → Recommendations</h3>
-          {!top && (
-            <div style={{ color: '#6b7280', marginBottom: 8 }}>
-              Upload & predict first to enable recommendations.
-            </div>
-          )}
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 10 }}>
-            <div>
-              <label style={{ fontSize: 12, color: '#6b7280' }}>Latitude</label>
-              <input
-                type="number"
-                step="0.0001"
-                value={lat}
-                onChange={(e) => setLat(parseFloat(e.target.value || '0'))}
-                style={inputBox}
-                disabled={!top}
-              />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, color: '#6b7280' }}>Longitude</label>
-              <input
-                type="number"
-                step="0.0001"
-                value={lon}
-                onChange={(e) => setLon(parseFloat(e.target.value || '0'))}
-                style={inputBox}
-                disabled={!top}
-              />
-            </div>
-          </div>
-
-          <button
-            style={top ? btnPrimary : { ...btnPrimary, opacity: 0.5, cursor: 'not-allowed' }}
-            disabled={!top || loadingRec}
-            onClick={() => refetch()}
-          >
-            {loadingRec ? 'Getting recommendations…' : 'Get recommendations'}
-          </button>
-
-          {recErr && (
-            <div style={{ marginTop: 10, color: '#b91c1c' }}>
-              Recommendation failed. Backend might be down or ML not running.
-            </div>
-          )}
-
-          {rec && (
-            <div style={{ marginTop: 14 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>Recommendations</div>
-              <div style={{ ...card, background: '#0b1324', color: '#e2e8f0', overflowX: 'auto' }}>
-                <pre style={{ margin: 0 }}>{JSON.stringify(rec, null, 2)}</pre>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Species catalog */}
-        <section style={{ ...card }}>
-          <h3 style={{ marginTop: 0 }}>Species Catalog</h3>
-          {loadingSpecies ? (
-            <div>Loading species…</div>
-          ) : (
-            <ul style={{ margin: 0, paddingLeft: 18 }}>
-              {species.map(s => (
-                <li key={s.id}>
-                  {s.common_name} <span style={{ color: '#6b7280' }}>({s.scientific_name})</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <footer style={{ color: '#9ca3af', fontSize: 12, textAlign: 'center', marginTop: 18 }}>
-          API: http://localhost:4000/api &nbsp;|&nbsp; ML: http://localhost:8001
         </footer>
       </div>
     </div>
