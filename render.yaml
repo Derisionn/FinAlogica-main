@@ -19,7 +19,7 @@ services:
     startCommand: npm start
     envVars:
       - key: DATABASE_URL
-        fromValue: postgresql://neondb_owner:npg_pKi65tdHZRCT@ep-damp-thunder-a1oqe6z4-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+        fromValue: postgresql://neondb_owner:npg_zrC4v9SnuHLx@ep-sweet-tree-a1f2z6a0-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
       - key: ML_URL
         value: https://finalogica-main.onrender.com/api # Replace with your actual live ML URL
       - key: OPEN_METEO
