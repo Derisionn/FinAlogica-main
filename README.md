@@ -1,6 +1,6 @@
 # FinAlogica — AI-Powered Fisheries Intelligence 🤖 🐟
 
-### 🚀 [Live Demo](https://finalogica-main.vercel.app) | [Backend API](https://finalogica-main-1.onrender.com/api/health) | [ML Engine](https://finalogica-main.onrender.com/docs)
+### 🚀 [Live Demo](https://fin-alogica-main-6rka.vercel.app/) | [Backend API](https://finalogica-main-1.onrender.com/api/health) | [ML Engine](https://finalogica-main.onrender.com/docs)
 
 **FinAlogica** is a high-performance, microservice-based ecosystem designed to provide intelligent fish identification and real-time fishing recommendations by bridging Computer Vision with live environmental data.
 
