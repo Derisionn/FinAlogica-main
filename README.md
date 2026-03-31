@@ -1,44 +1,81 @@
+# FinAlogica — AI-Powered Fisheries Intelligence 🤖 🐟
 
-# FinAlogica — AI Fish Identification & Recommendation
+**FinAlogica** is a high-performance, microservice-based ecosystem designed to provide intelligent fish identification and real-time fishing recommendations by bridging Computer Vision with live environmental data.
 
-**Stack**: React + Redux Toolkit (frontend), Node.js/Express (backend), PostgreSQL (database).  
-**Outcomes**: 95% ID accuracy target, ~30% workflow productivity boost via automated logging, +40% recommendation relevance by combining weather + fisheries rules.
+---
 
-## What you get
+## 🌟 Core Features
 
-- `/frontend` — React + Redux Toolkit (RTK Query) web UI.
-- `/backend`  — Node.js/Express REST API (talks to Postgres + Python ML engine).
-- `/ml`       — Python inference engine (torch + torchvision Mobilenet) with a tiny fish label map.
-- `/streamlit_app` — A Streamlit app that "hosts" the experience locally: upload an image → get species + recommendations.
-- `/db`       — Postgres schema + seed data.
+- **AI Species Identification**: Leveraging a specialized `MobileNet-V3 Small` architecture for ultra-fast Image Classification.
+- **Smart Environmental Logic**: Real-time integration with the **Open-Meteo API** to calculate optimal fishing conditions based on species biology and weather trends.
+- **Cross-Platform Accessibility**: Seamless experience across a **React/Redux** web application and a **Streamlit** data dashboard.
+- **Microservice Architecture**: Decoupled systems for Backend (Node.js/Express) and ML Inference (Python/FastAPI).
 
-# 1) Start the ML engine
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    User((User)) -->|Upload Image| Frontend[React Web App]
+    Frontend -->|API Request| Backend[Node.js / Express]
+    Backend -->|Model Query| ML[FastAPI / PyTorch ML Engine]
+    ML -->|Species Data| Backend
+    Backend -->|Fetch Weather| OpenMeteo[Open-Meteo API]
+    Backend -->|Retrieve History| DB[(PostgreSQL)]
+    Backend -->|Calculated Recommendations| Frontend
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Component | Technology |
+| :--- | :--- |
+| **Frontend** | React, Redux Toolkit, Vite, CSS Modules |
+| **Backend** | Node.js, Express, Neon PostgreSQL |
+| **ML Engine** | Python, FastAPI, PyTorch, Torchvision |
+| **Inference Tools** | Pillow, NumPy, ONNX-ready |
+| **Dashboards** | Streamlit |
+| **Deployment** | Vercel (Frontend), Render (Backend/ML) |
+
+---
+
+## 🚀 Getting Started
+
+### 1. ML Engine (Python)
 ```bash
 cd ml
-python -m venv .venv
-.venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python server.py
 ```
 
-# 2) Start the backend API
+### 2. Backend API (Node.js)
 ```bash
 cd backend
 npm install
 npm run dev
 ```
-# 3) Start the Streamlit app
-```bash
-cd streamlit_app
-python -m venv .venv 
-.venv\Scripts\activate
-pip install -r requirements.txt
-streamlit run app.py
-```
-# 4) Run the React app
+
+### 3. Frontend (React)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
 ---
+
+## 🔍 ML Model Details
+The system uses a **MobileNet-V3 Small** backbone, pre-trained on ImageNet and fine-tuned/mapped for common fish species. It is specifically optimized for **low-memory environments** (Render Free Tier), utilizing only `torch.set_num_threads(1)` and CPU-based inference to maintain high availability without high overhead.
+
+---
+
+## 📈 Roadmap
+- [ ] Implement YOLOv8 for real-time video species detection.
+- [ ] Expand the species dictionary to include 100+ global varieties.
+- [ ] Add historical catch tracking for predictive analytics.
+
+---
+*Developed by [Harsh](https://github.com/Derisionn)*
